@@ -1,17 +1,17 @@
 ---
-name: liepin-assistant-repair-design
-description: Approved repair design for improving the liepin-assistant skill package without shipping runtime browser state.
+name: liepin-skill-repair-design
+description: Approved repair design for improving the liepin-skill package without shipping runtime browser state.
 ---
 
-# Liepin Assistant Repair Design
+# Liepin Skill Repair Design
 
 ## Goal
 
-Improve `liepin-assistant` so it is safer to share, clearer to trigger, more portable across agent environments, and easier to evaluate, while keeping a local `profile/` directory inside the skill folder for runtime browser state.
+Improve `liepin-skill` so it is safer to share, clearer to trigger, more portable across agent environments, and easier to evaluate, while keeping a local `profile/` directory inside the skill folder for runtime browser state.
 
 ## Constraints
 
-- Keep `profile/` at `/Users/ysy/.agents/skills/liepin-assistant/profile`
+- Keep `profile/` at `/Users/ysy/.agents/skills/liepin-skill/profile`
 - Do not ship or publish `profile/` contents
 - Preserve the core workflow of using a real browser session to inspect job listings
 - Avoid framing the skill as bypassing anti-bot protections
@@ -52,7 +52,7 @@ Improve `liepin-assistant` so it is safer to share, clearer to trigger, more por
 - Keep the isolated profile and debug port behavior
 - Remove `--remote-allow-origins="*"` unless validation proves it is required for the intended local workflow
 - Improve error messaging so the user can recover if Chrome is not found or remote debugging is unavailable
-- Keep the launcher pointed at `/Users/ysy/.agents/skills/liepin-assistant/profile` exactly
+- Keep the launcher pointed at `/Users/ysy/.agents/skills/liepin-skill/profile` exactly
 
 ### 5. Evaluation Coverage
 
@@ -82,5 +82,5 @@ Improve `liepin-assistant` so it is safer to share, clearer to trigger, more por
 - `profile/` remains usable locally but is clearly documented as runtime-only
 - No completion claim is made until the resulting package contents are checked and `profile/` runtime data is absent from the shareable set
 - `launch_liepin_chrome.sh` passes shell syntax validation
-- `launch_liepin_chrome.sh` still targets `/Users/ysy/.agents/skills/liepin-assistant/profile`
+- `launch_liepin_chrome.sh` still targets `/Users/ysy/.agents/skills/liepin-skill/profile`
 - `evals/evals.json` covers happy path and core failure paths

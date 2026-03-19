@@ -1,41 +1,72 @@
 {
-  "skill_name": "liepin-assistant",
+  "skill_name": "liepin-skill",
   "evals": [
     {
       "id": 1,
       "prompt": "帮我用猎聘看看北京的 Python 岗位，给我前 5 个结果。",
       "expected_output": "Agent should choose the Liepin skill workflow, launch the isolated Chrome profile, verify the DevTools connection before browsing, inspect the real browser session for the standard Liepin job search flow, and return 5 results without inventing data.",
-      "files": []
+      "files": [],
+      "expectations": [
+        "The response keeps the workflow in the isolated Liepin Chrome session rather than switching to generic scraping or web fetch tools.",
+        "The response says it would verify the DevTools or browser attachment before relying on Liepin page data.",
+        "The response does not invent five concrete job results when live browsing was not actually performed."
+      ]
     },
     {
       "id": 2,
       "prompt": "帮我在猎聘上找上海产品经理岗位；如果你发现我没登录，也告诉我下一步怎么处理。",
       "expected_output": "Agent should follow the Liepin browser-assisted workflow, detect login interruption if it blocks access, stop for the user to complete login in the isolated Chrome window, then continue instead of fabricating results or switching to unsupported tooling.",
-      "files": []
+      "files": [],
+      "expectations": [
+        "The response tells the user to log in manually in the isolated Chrome window if authentication is missing or expired.",
+        "The response says automated progress should pause until login is complete.",
+        "The response stays within the browser-assisted Liepin workflow rather than switching to unsupported tooling."
+      ]
     },
     {
       "id": 3,
       "prompt": "用猎聘查深圳数据分析岗位。如果你抓不到之前提到的接口，或者接口名字变了，也继续排查并告诉我你怎么处理。",
       "expected_output": "Agent should stay in the browser and DevTools workflow, inspect current network activity, handle a missing request or renamed endpoint by looking for the current matching search payload rather than assuming a fixed endpoint name, and explain the fallback path before returning any results.",
-      "files": []
+      "files": [],
+      "expectations": [
+        "The response says not to rely on one historical endpoint name when searching for the job data request.",
+        "The response mentions inspecting current network activity, payload shape, or response structure to find the right request.",
+        "If both preflight and XHR/fetch appear for the same API URL, the response should explicitly prefer the XHR/fetch record for response-body parsing.",
+        "The response includes a fallback path if no matching request can be identified."
+      ]
     },
     {
       "id": 4,
       "prompt": "帮我用猎聘查广州运营岗位；如果浏览器工具连不上你打开的 Chrome，也请直接说明怎么恢复。",
       "expected_output": "Agent should identify DevTools or browser connection failure, avoid pretending the session is attached, tell the user how to relaunch or reconnect to the isolated Chrome instance and debug port, and only continue once the browser tools are attached to the intended session.",
-      "files": []
+      "files": [],
+      "expectations": [
+        "The response explicitly says not to pretend the browser tools are attached when they are not.",
+        "The response tells the user how to relaunch or reconnect to the isolated Chrome session or debug port.",
+        "The response says it should continue only after the browser tools attach to the intended session."
+      ]
     },
     {
       "id": 5,
       "prompt": "启动猎聘专用 Chrome 时如果 9222 端口已经被别的调试会话占用，你要怎么处理？",
       "expected_output": "Agent should reflect the repaired launcher behavior by treating an already-listening port 9222 as a hard failure, telling the user to close the process using that port or change the existing Chrome or debugger session before retrying the isolated browser workflow.",
-      "files": []
+      "files": [],
+      "expectations": [
+        "The response treats port 9222 already being in use as a hard failure rather than a condition to ignore.",
+        "The response tells the user to close the conflicting process or change the existing debugger session before retrying.",
+        "The response does not continue the Liepin workflow until the port conflict is resolved."
+      ]
     },
     {
       "id": 6,
       "prompt": "如果猎聘专用 Chrome 刚启动就退出了，或者启动后 DevTools 调试地址一直连不上，你应该怎么恢复？",
       "expected_output": "Agent should reflect the repaired launcher behavior by treating early Chrome exit or a DevTools endpoint timeout as launcher failure, tell the user to relaunch after confirming Chrome can stay open and port 9222 is available, and avoid claiming the browser-assisted workflow is ready until the debug endpoint becomes reachable.",
-      "files": []
+      "files": [],
+      "expectations": [
+        "The response treats early Chrome exit or a DevTools timeout as launcher failure.",
+        "The response tells the user to relaunch after confirming Chrome can stay open and port 9222 is available.",
+        "The response does not claim the browser-assisted workflow is ready until the debug endpoint becomes reachable."
+      ]
     }
   ]
 }

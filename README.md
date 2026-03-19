@@ -1,6 +1,6 @@
-# Liepin Assistant (猎聘小助手)
+# Liepin Skill (猎聘小助手)
 
-`liepin-assistant` is a reusable skill package for AI agents that need to work with Liepin through a real Chrome browser session. It is designed for browser-assisted job search, listing review, and user-directed page interaction rather than direct scraping shortcuts.
+`liepin-skill` is a reusable skill package for AI agents that need to work with Liepin through a real Chrome browser session. It is designed for browser-assisted job search, listing review, and user-directed page interaction rather than direct scraping shortcuts.
 
 ## What It Covers
 
@@ -11,21 +11,39 @@
 
 ## Install And Run
 
-1. Place this directory in your local skills folder, for example `~/.agents/skills/liepin-assistant`.
-2. Keep `profile/` on disk for local runtime use only. It stores the isolated Chrome session for this machine.
-3. Start the dedicated browser with:
+1. Place this directory in your local skills folder and set its absolute path as `LIEPIN_SKILL_DIR` (do not assume a fixed root directory), for example:
 
 ```bash
-bash ~/.agents/skills/liepin-assistant/scripts/launch_liepin_chrome.sh
+export LIEPIN_SKILL_DIR="/absolute/path/to/liepin-skill"
+```
+2. Keep `profile/` on disk for local runtime use only. It stores the isolated Chrome session for this machine.
+3. Make sure your agent environment has Chrome DevTools MCP or equivalent Chrome DevTools browser tools installed. If not, install/configure it first using the upstream project: `https://github.com/ChromeDevTools/chrome-devtools-mcp`.
+4. Start the dedicated browser with:
+
+```bash
+bash "$LIEPIN_SKILL_DIR/scripts/launch_liepin_chrome.sh"
 ```
 
-4. If your Chrome build asks for it on first use, enable remote debugging for that isolated browser instance.
-5. Let your agent attach its available Chrome DevTools browser tools to that isolated session before starting Liepin work.
+5. If needed, override the default debugger port for your own machine before launch, for example `LIEPIN_DEBUG_PORT=9333 bash "$LIEPIN_SKILL_DIR/scripts/launch_liepin_chrome.sh"`.
+6. The launcher writes `session.json` with the actual debugger port and URL for that dedicated browser session.
+7. Point Chrome DevTools MCP at that dedicated browser endpoint instead of letting it control an unrelated blank browser session.
+   - You can print the recommended connection target with:
+
+```bash
+python3 "$LIEPIN_SKILL_DIR/scripts/print_browser_url.py"
+```
+
+8. On first use, open Liepin in that isolated browser, check the login state, and if you are logged out, log in manually in that same window.
+9. If Chrome DevTools MCP still cannot control the dedicated browser, open `chrome://inspect/#remote-debugging` in that same dedicated browser, enable remote debugging, close the tab, and then let the agent continue.
+10. Later runs should reuse that same `profile/` directory so the login session remains available in the dedicated browser.
+11. If your harness browser tools open a separate blank browser, do not treat that blank browser as the Liepin session. The dedicated profile browser created by the launcher is the one this skill is meant to operate on.
 
 ## Local Runtime State
 
 - `profile/` is runtime-only local state.
 - `profile/` may contain login state, cookies, cache, and other machine-local browser data.
+- `profile/` is the persisted login/session store for later runs of this skill on the same machine.
+- `session.json` stores the latest debugger endpoint metadata for the dedicated browser session.
 - Do not include `profile/` in commits, exports, release bundles, or shared archives.
 - Do not treat `profile/` as part of the shareable skill package.
 
