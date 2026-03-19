@@ -88,7 +88,7 @@ npx skills add NOime22/liepin-skill -g -y
 帮我在猎聘里找上海产品经理岗位，先整理前 10 个结果。
 ```
 
-首次启动专用 Chrome 时，如果系统或 Chrome 弹出与 `remote-debugging` 相关的确认提示，需要你手动允许一次；否则 AI Agent 无法接管这个专用浏览器。
+如果首次启动后 AI Agent 发现还无法接管这个专用 Chrome，它应该先停下来，明确告诉你在这个专用浏览器里打开 `chrome://inspect/#remote-debugging`，手动开启 `remote-debugging`，关闭该标签页，然后回来告诉 AI “好了” 再继续。
 
 首次使用时，如果 Skill 检测到尚未登录，会提示你在专用 Chrome 窗口中手动完成登录。之后登录态会保存在本地 `profile/` 中，供后续继续复用。
 
