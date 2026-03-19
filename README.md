@@ -4,27 +4,11 @@
 
 它通过 Chrome `--remote-debugging` 驱动专用浏览器会话，帮助用户在猎聘中完成打招呼、职位检索、查看职位详情、检查投递链路等操作。整个流程基于真实浏览器页面交互，而不是直接伪造站点请求；同时该 Skill 会创建独立的专用浏览器环境，减少对日常浏览器会话、Cookie 和使用上下文的影响。
 
-## 安装
-
-推荐直接使用通用 Skills CLI 安装：
+## 直接安装
 
 ```bash
-npx skills add NOime22/liepin-skill
+npx skills add NOime22/liepin-skill -g -y
 ```
-
-常用变体：
-
-```bash
-npx skills add NOime22/liepin-skill -a codex
-npx skills add NOime22/liepin-skill --list
-```
-
-说明：
-
-- `npx skills add NOime22/liepin-skill` 会直接把这个 GitHub 仓库作为 Skill source 处理
-- 对 Codex 来说，安装器通常会把 Skill 放进当前项目的 `./.agents/skills/`，不需要你手动复制仓库
-- `--list` 用来先查看这个 source 里有哪些可安装 Skill
-- `-a codex` 用来显式指定安装到 Codex
 
 ## 工作方式示意图
 
@@ -88,10 +72,8 @@ flowchart LR
 
 ### 1. 安装 Skill
 
-优先使用上面的通用命令安装：
-
 ```bash
-npx skills add NOime22/liepin-skill -a codex
+npx skills add NOime22/liepin-skill -g -y
 ```
 
 ### 2. 确认 Agent 环境具备 Chrome 控制能力
@@ -115,12 +97,6 @@ npx skills add NOime22/liepin-skill -a codex
 - 手动排查专用 Chrome 是否正常启动
 - 手动读取当前调试连接地址
 - 在自定义 Agent 环境中调试接入方式
-
-如果你是在本地直接开发这个仓库，而不是通过 Skills CLI 安装，再按需把仓库路径暴露给环境：
-
-```bash
-export LIEPIN_SKILL_DIR="/你的/liepin-skill/绝对路径"
-```
 
 ## 常见指令示例
 
@@ -207,7 +183,7 @@ export LIEPIN_SKILL_DIR="/你的/liepin-skill/绝对路径"
 
 ### 4. 安装后文件会放到哪里？
 
-通过 `npx skills add` 安装时，Skills CLI 会把这个仓库里的 Skill 安装到当前 Agent 对应的 skills 目录。对 Codex 而言，默认通常会落到当前项目下的 `./.agents/skills/liepin-skill`。普通使用者不需要手动管理这个目录，也不需要自己复制仓库内容。
+通过 `npx skills add NOime22/liepin-skill -g -y` 安装时，Skills CLI 会把这个 Skill 安装到全局 skills 目录。实测默认会落到 `~/.agents/skills/liepin-skill`。普通使用者不需要手动管理这个目录，也不需要自己复制仓库内容。
 
 ### 5. 为什么安装命令和仓库地址是同一个？
 
