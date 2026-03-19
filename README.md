@@ -1,66 +1,127 @@
-# Liepin Skill (猎聘小助手)
+# liepin-skill
 
-`liepin-skill` is a reusable skill package for AI agents that need to work with Liepin through a real Chrome browser session. It is designed for browser-assisted job search, listing review, and user-directed page interaction rather than direct scraping shortcuts.
+一个面向 AI 代理的猎聘自动化技能。
 
-## What It Covers
+它通过 Chrome `--remote-debugging` 驱动专用浏览器会话，帮助用户在猎聘中完成打招呼、职位检索、查看职位详情、检查投递链路等操作。整个流程基于真实浏览器页面交互，而不是直接伪造站点请求；同时该技能会创建独立的专用浏览器环境，减少对日常浏览器会话、Cookie 和使用上下文的影响。
 
-- Search Liepin and summarize job listings from the live site.
-- Inspect page-driven network responses from the active browser session when available.
-- Help with user-directed actions such as opening jobs, greeting recruiters, and checking apply flows.
-- Pause for manual login when the site requires authentication.
+## 适合谁
 
-## Install And Run
+- 想让 AI 代理帮自己在猎聘里完成重复求职操作的人
+- 希望把猎聘操作限定在独立浏览器环境中，避免和日常浏览器混用的人
+- 需要一个可复用、可维护的浏览器自动化技能，而不是一次性脚本的人
 
-1. Place this directory in your local skills folder and set its absolute path as `LIEPIN_SKILL_DIR` (do not assume a fixed root directory), for example:
+## 可以做什么
+
+- 在猎聘中检索职位并读取当前页面对应的职位数据
+- 打开职位详情页，辅助判断是否值得继续沟通或投递
+- 在真实页面中执行点击、打开、进入聊天等用户指令
+- 配合页面状态和网络请求，确认打招呼、投递等动作是否真的完成
+- 在登录失效、调试连接异常、接口变化时，给出明确的恢复路径
+
+## 为什么不是普通自动化脚本
+
+### 1. 更接近真人浏览器操作路径
+
+该技能通过 Chrome 的远程调试能力控制真实浏览器页面，优先依赖页面交互和浏览器内网络流量，而不是绕过页面直接批量伪造请求。对于需要登录态、页面上下文和真实交互链路的场景，这种方式更稳定，也更容易核实每一步是否真的发生。
+
+### 2. 专用浏览器隔离日常环境
+
+该技能会创建独立的浏览器 `profile/` 目录，专门用于猎聘会话。这样做的价值是：
+
+- 降低与日常浏览器账号、Cookie、历史记录混用的风险
+- 降低 AI 代理误操作到你日常浏览器标签页的概率
+- 让登录态、调试端口和自动化会话保持在一个可控范围内
+
+### 3. 不是只会“点页面”
+
+这个技能不只是点击按钮。它还会结合页面可见状态、网络请求和响应结果，尽量避免“看起来点了，其实没成功”的假成功。
+
+## 使用边界
+
+这个项目不承诺“完全无风控风险”或“绝对安全”。更准确的说法是：
+
+- 它采用的是真实浏览器交互路径，而不是粗暴抓包或直接伪造站点接口
+- 它使用的是独立浏览器环境，能降低与日常浏览器混用带来的暴露和串号风险
+- 你仍然应该按照平台规则和正常用户意图使用，不要把它用于高频、批量、骚扰式操作
+
+如果你需要的是大规模群发、批量刷投、绕过登录或规避平台规则，这个技能不是为那种场景设计的。
+
+## 快速开始
+
+### 1. 放到本地技能目录
+
+将本目录放到你的本地技能目录中，并设置环境变量：
 
 ```bash
-export LIEPIN_SKILL_DIR="/absolute/path/to/liepin-skill"
+export LIEPIN_SKILL_DIR="/你的/liepin-skill/绝对路径"
 ```
-2. Keep `profile/` on disk for local runtime use only. It stores the isolated Chrome session for this machine.
-3. Make sure your agent environment has Chrome DevTools MCP or equivalent Chrome DevTools browser tools installed. If not, install/configure it first using the upstream project: `https://github.com/ChromeDevTools/chrome-devtools-mcp`.
-4. Start the dedicated browser with:
+
+### 2. 确认浏览器调试工具可用
+
+你的 Agent 环境需要能控制 Chrome DevTools。建议使用 Chrome DevTools MCP 或等价的浏览器控制能力。
+
+### 3. 启动专用浏览器
 
 ```bash
 bash "$LIEPIN_SKILL_DIR/scripts/launch_liepin_chrome.sh"
 ```
 
-5. If needed, override the default debugger port for your own machine before launch, for example `LIEPIN_DEBUG_PORT=9333 bash "$LIEPIN_SKILL_DIR/scripts/launch_liepin_chrome.sh"`.
-6. The launcher writes `session.json` with the actual debugger port and URL for that dedicated browser session.
-7. Point Chrome DevTools MCP at that dedicated browser endpoint instead of letting it control an unrelated blank browser session.
-   - You can print the recommended connection target with:
+如果需要改调试端口：
+
+```bash
+LIEPIN_DEBUG_PORT=9333 bash "$LIEPIN_SKILL_DIR/scripts/launch_liepin_chrome.sh"
+```
+
+### 4. 获取调试连接地址
 
 ```bash
 python3 "$LIEPIN_SKILL_DIR/scripts/print_browser_url.py"
 ```
 
-8. On first use, open Liepin in that isolated browser, check the login state, and if you are logged out, log in manually in that same window.
-9. If Chrome DevTools MCP still cannot control the dedicated browser, open `chrome://inspect/#remote-debugging` in that same dedicated browser, enable remote debugging, close the tab, and then let the agent continue.
-10. Later runs should reuse that same `profile/` directory so the login session remains available in the dedicated browser.
-11. If your harness browser tools open a separate blank browser, do not treat that blank browser as the Liepin session. The dedicated profile browser created by the launcher is the one this skill is meant to operate on.
+### 5. 在专用浏览器中完成登录
 
-## Local Runtime State
+首次使用时，请在这个专用 Chrome 窗口里登录猎聘。之后登录态会保存在本地 `profile/` 中，供后续继续复用。
 
-- `profile/` is runtime-only local state.
-- `profile/` may contain login state, cookies, cache, and other machine-local browser data.
-- `profile/` is the persisted login/session store for later runs of this skill on the same machine.
-- `session.json` stores the latest debugger endpoint metadata for the dedicated browser session.
-- Do not include `profile/` in commits, exports, release bundles, or shared archives.
-- Do not treat `profile/` as part of the shareable skill package.
+如果调试工具无法接入这个专用浏览器，优先检查三件事：
 
-## Package Layout
+- Chrome 是否仍然保持打开
+- 调试端口是否与 `session.json` 一致
+- 你的浏览器控制工具是否真的连接到了这个专用浏览器，而不是另一个空白浏览器实例
 
-- `SKILL.md`: instructions for the agent.
-- `README.md`: human-facing usage notes.
-- `scripts/`: local helper scripts such as the Chrome launcher.
-- `evals/`: evaluation cases for the skill package.
-- `profile/`: local browser runtime state, not for distribution.
+必要时直接重启专用浏览器，并重新读取连接地址，通常比在浏览器里手工改调试设置更可靠。
 
-## Usage Notes
+## 典型使用场景
 
-- The default result ordering follows Liepin's current page ordering unless the user asks for a different sort.
-- If login expires, the agent should stop, surface the login state, and wait for manual login in the isolated Chrome window.
-- If the expected network request changes, the agent should inspect the live page flow and use the request that matches the current interaction and response shape.
+- “帮我看看北京的 Python 岗位，先给我前 10 个结果。”
+- “打开这个职位详情，判断一下值不值得投。”
+- “进入聊天页，帮我确认刚才的招呼语是不是真的发出去了。”
+- “如果能投简历就继续，如果只是 `聊一聊` 就告诉我不要算作投递成功。”
 
-## Safety
+## 项目结构
 
-Use this skill in line with Liepin's terms, normal user intent, and the user's explicit instructions. Avoid high-volume or abusive automation, and keep the browser workflow transparent to the user.
+- [SKILL.md](./SKILL.md)：技能主体说明，定义触发条件、工作流和边界
+- [scripts/launch_liepin_chrome.sh](./scripts/launch_liepin_chrome.sh)：启动并维护专用 Chrome 会话
+- [scripts/print_browser_url.py](./scripts/print_browser_url.py)：读取 `session.json` 并输出调试连接地址
+- [evals/evals.json](./evals/evals.json)：回归评测样例，用于后续维护时防止能力退化
+
+## 本地运行态说明
+
+以下内容是本地运行态，不属于对外发布内容：
+
+- `profile/`
+- `session.json`
+- `chrome-launch.log`
+
+这些文件已经通过 [.gitignore](./.gitignore) 排除，不应被提交、打包或分享。
+
+## 维护建议
+
+如果你后续会继续迭代这个技能，建议保留 `evals/`。它不是运行必需，但能帮助你在修改 `SKILL.md` 或脚本后快速检查关键行为有没有退化，比如：
+
+- 登录失效时是否会停下来等待用户
+- 是否错误把 `Preflight` 当成真实职位数据
+- 浏览器启动失败时是否会给出明确恢复路径
+
+## 许可证与使用原则
+
+请在遵守猎聘平台规则、账号授权范围和正常求职意图的前提下使用本项目。这个技能的目标是帮助用户以更稳定、更可控的方式完成真实浏览器内的求职操作，而不是规避平台规则。
