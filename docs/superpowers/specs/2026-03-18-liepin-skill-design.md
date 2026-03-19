@@ -11,7 +11,7 @@ Improve `liepin-skill` so it is safer to share, clearer to trigger, more portabl
 
 ## Constraints
 
-- Keep `profile/` at `/Users/ysy/.agents/skills/liepin-skill/profile`
+- Keep `profile/` at `<skill-dir>/profile`
 - Do not ship or publish `profile/` contents
 - Preserve the core workflow of using a real browser session to inspect job listings
 - Avoid framing the skill as bypassing anti-bot protections
@@ -52,7 +52,7 @@ Improve `liepin-skill` so it is safer to share, clearer to trigger, more portabl
 - Keep the isolated profile and debug port behavior
 - Remove `--remote-allow-origins="*"` unless validation proves it is required for the intended local workflow
 - Improve error messaging so the user can recover if Chrome is not found or remote debugging is unavailable
-- Keep the launcher pointed at `/Users/ysy/.agents/skills/liepin-skill/profile` exactly
+- Keep the launcher pointed at `<skill-dir>/profile` exactly
 
 ### 5. Evaluation Coverage
 
@@ -82,5 +82,5 @@ Improve `liepin-skill` so it is safer to share, clearer to trigger, more portabl
 - `profile/` remains usable locally but is clearly documented as runtime-only
 - No completion claim is made until the resulting package contents are checked and `profile/` runtime data is absent from the shareable set
 - `launch_liepin_chrome.sh` passes shell syntax validation
-- `launch_liepin_chrome.sh` still targets `/Users/ysy/.agents/skills/liepin-skill/profile`
+- `launch_liepin_chrome.sh` still targets `<skill-dir>/profile`
 - `evals/evals.json` covers happy path and core failure paths

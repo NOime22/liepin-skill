@@ -15,8 +15,8 @@
 ### Task 1: Ignore local runtime artifacts
 
 **Files:**
-- Create: `/Users/ysy/.agents/skills/liepin-skill/.gitignore`
-- Modify: `/Users/ysy/.agents/skills/liepin-skill/README.md`
+- Create: `<skill-dir>/.gitignore`
+- Modify: `<skill-dir>/README.md`
 
 - [ ] **Step 1: Add ignore rules for `profile/`, `.DS_Store`, and other local runtime artifacts**
 - [ ] **Step 2: Verify the rules cover `profile/`, `.DS_Store`, and local runtime byproducts**
@@ -25,7 +25,7 @@
 ### Task 2: Remove local junk files from the shareable set
 
 **Files:**
-- Delete: `/Users/ysy/.agents/skills/liepin-skill/.DS_Store`
+- Delete: `<skill-dir>/.DS_Store`
 
 - [ ] **Step 1: Remove `.DS_Store`**
 - [ ] **Step 2: Verify it no longer appears in the package listing**
@@ -35,7 +35,7 @@
 ### Task 3: Rewrite the skill entrypoint for safer triggers and portable tool guidance
 
 **Files:**
-- Modify: `/Users/ysy/.agents/skills/liepin-skill/SKILL.md`
+- Modify: `<skill-dir>/SKILL.md`
 
 - [ ] **Step 1: Rewrite frontmatter so description is trigger-based**
 - [ ] **Step 2: Replace environment-specific tool names with portable Chrome DevTools guidance**
@@ -50,7 +50,7 @@
 ### Task 4: Rewrite the human-facing README to match the repaired model
 
 **Files:**
-- Modify: `/Users/ysy/.agents/skills/liepin-skill/README.md`
+- Modify: `<skill-dir>/README.md`
 
 - [ ] **Step 1: Reframe the skill description in neutral terms**
 - [ ] **Step 2: Clarify installation and local profile behavior**
@@ -61,18 +61,18 @@
 ### Task 5: Tighten the launcher script defaults
 
 **Files:**
-- Modify: `/Users/ysy/.agents/skills/liepin-skill/scripts/launch_liepin_chrome.sh`
+- Modify: `<skill-dir>/scripts/launch_liepin_chrome.sh`
 
 - [ ] **Step 1: Keep the isolated profile behavior, exact profile path, and remote debugging port behavior**
-- [ ] **Step 2: Preserve creation of `/Users/ysy/.agents/skills/liepin-skill/profile` on demand when missing**
+- [ ] **Step 2: Preserve creation of `<skill-dir>/profile` on demand when missing**
 - [ ] **Step 3: Remove broad flags unless required**
 - [ ] **Step 4: Improve recovery messaging for missing Chrome or debugging issues**
-- [ ] **Step 5: Run `bash -n /Users/ysy/.agents/skills/liepin-skill/scripts/launch_liepin_chrome.sh`**
+- [ ] **Step 5: Run `bash -n <skill-dir>/scripts/launch_liepin_chrome.sh`**
 
 ### Task 6: Replace fragile evals with workflow and failure-path coverage
 
 **Files:**
-- Modify: `/Users/ysy/.agents/skills/liepin-skill/evals/evals.json`
+- Modify: `<skill-dir>/evals/evals.json`
 
 - [ ] **Step 1: Rewrite the happy-path eval to cover a standard Liepin job search workflow and correct tool/process selection**
 - [ ] **Step 2: Add login interruption coverage**
@@ -84,14 +84,14 @@
 ### Task 7: Verify the repaired package state
 
 **Files:**
-- Verify: `/Users/ysy/.agents/skills/liepin-skill/SKILL.md`
-- Verify: `/Users/ysy/.agents/skills/liepin-skill/README.md`
-- Verify: `/Users/ysy/.agents/skills/liepin-skill/.gitignore`
-- Verify: `/Users/ysy/.agents/skills/liepin-skill/evals/evals.json`
-- Verify: `/Users/ysy/.agents/skills/liepin-skill/scripts/launch_liepin_chrome.sh`
+- Verify: `<skill-dir>/SKILL.md`
+- Verify: `<skill-dir>/README.md`
+- Verify: `<skill-dir>/.gitignore`
+- Verify: `<skill-dir>/evals/evals.json`
+- Verify: `<skill-dir>/scripts/launch_liepin_chrome.sh`
 
 - [ ] **Step 1: Read the repaired files and confirm they match the design**
-- [ ] **Step 2: Run `bash -n /Users/ysy/.agents/skills/liepin-skill/scripts/launch_liepin_chrome.sh` and confirm syntax is valid**
+- [ ] **Step 2: Run `bash -n <skill-dir>/scripts/launch_liepin_chrome.sh` and confirm syntax is valid**
 - [ ] **Step 3: Read `SKILL.md` and confirm the renamed-endpoint fallback and default-ordering guidance are present**
 - [ ] **Step 4: Read `README.md` and confirm it forbids including `profile/` in commits, exports, release bundles, and shared archives**
 - [ ] **Step 5: Run an explicit shareable-package inventory check and confirm `profile/` runtime data is absent from the shareable set before any completion claim**
