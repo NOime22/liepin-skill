@@ -5,3 +5,4 @@ session.json
 *.tmp
 tmp/
 .tmp/
+docs/superpowers/
